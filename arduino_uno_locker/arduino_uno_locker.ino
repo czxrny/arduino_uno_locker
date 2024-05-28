@@ -32,7 +32,7 @@ const char keys[rows][cols] = { { '1', '2', '3', 0 },
 Keypad *keypad = new Keypad(makeKeymap(keys), buttonsRowPins, buttonsColPins, rows, cols);
 
 //
-byte stepperI1 = 2, stepperI2 = 3, stepperI3 = 2, stepperI4 = 5;
+byte stepperI1 = 2, stepperI2 = 4, stepperI3 = 3, stepperI4 = 5;
 const int steps = 2048;
 const byte motorSpeed = 10;
 Stepper *stepperMotor = new Stepper(steps, stepperI1, stepperI2, stepperI3, stepperI4);
@@ -107,7 +107,7 @@ void loop() {
       char input = keypad->getKey();
       if (input == 'c') {
         isSecured = true;
-        //stepperMotor->step(steps * -1);
+        stepperMotor->step(steps / -4);
         comunicator->changeLedStates(redDiode, greenDiode);
         comunicator->buzzerSound(200);
         comunicator->clearLCD();
@@ -161,12 +161,12 @@ void loop() {
         delay(50);
         if (passwordManager->passwordsMatch(passwordTried, psswd)) {
           comunicator->lockerIsUnlocked();
+          stepperMotor->step(steps / 4);
           for (int i = 0; i < 2; i++) {
             comunicator->buzzerSound(200);
             delay(50);
           }
           comunicator->ledFlash(greenDiode, 2);
-          //stepperMotor->step(steps);
           comunicator->changeLedStates(greenDiode, redDiode);
           isSecured = false;
         } else {
