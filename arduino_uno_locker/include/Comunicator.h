@@ -13,9 +13,13 @@ class Comunicator {
 public:
   Comunicator(LCD_I2C &lcd, byte buzzerPin);
   void welcomeScreen();
+  void lockerIsClosed();
+  void lockerIsUnlocked();
   void enterPassword();
   void setNewPassword();
   void presscToClose();
+  void pressButton();
+  void showMenu();
   void printchar(byte col, byte row, char character);
   void confirmPassword();
   void passwordDoesntMatch();
@@ -26,6 +30,7 @@ public:
 private:
   LCD_I2C *lcd;
   byte buzzerPin;
+  byte ledBrightness;
 };
 
 #endif

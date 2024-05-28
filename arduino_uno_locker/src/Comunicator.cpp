@@ -12,6 +12,20 @@ void Comunicator::welcomeScreen() {
   delay(2000);
 }
 
+void Comunicator::lockerIsClosed(){
+  lcd->setCursor(1, 0);
+  lcd->print("Wprowadz haslo");
+  lcd->setCursor(1, 1);
+  lcd->print("Aby otworzyc!");
+}
+
+void Comunicator::lockerIsUnlocked(){
+  lcd->setCursor(4, 0);
+  lcd->print("Skrytka");
+  lcd->setCursor(4, 1);
+  lcd->print("otwarta!");
+}
+
 void Comunicator::enterPassword(){
   lcd->clear();
   lcd->setCursor(5, 0);
@@ -32,14 +46,28 @@ void Comunicator::setNewPassword() {
   enterPassword();
 }
 
-void Comunicator::presscToClose(){
-    lcd->clear();
-    delay(500);
-    lcd->setCursor(0, 0);
-    lcd->print("Nacisnij 'c' aby");
-    lcd->setCursor(2, 1);
-    lcd->print("zamknac skrytke!");
-    delay(500);
+void Comunicator::pressButton(){
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  lcd->print("c> zamknij zamek");
+  lcd->setCursor(0, 1);
+  lcd->print("x> otworz menu");
+  
+}
+
+void Comunicator::showMenu(){
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  lcd->print("1> zmien haslo");
+  lcd->setCursor(0, 1);
+  lcd->print("2> jasnosc led");
+  delay(2000);
+  lcd->clear();
+  lcd->setCursor(0,0);
+  lcd->print("3> wyjdz z menu");
+  delay(2000);
+  lcd->clear();
+  lcd->print("Wybor >> ");
 }
 
 void Comunicator::printchar(byte col, byte row, char character) {
@@ -68,7 +96,6 @@ void Comunicator::wrongPassword(){
   lcd->print("Nieprawidlowe");
   lcd->setCursor(5, 1);
   lcd->print("haslo!");
-  delay(1000);
 }
 
 void Comunicator::buzzerSound(int time) {
