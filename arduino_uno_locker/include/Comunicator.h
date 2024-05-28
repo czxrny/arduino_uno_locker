@@ -20,11 +20,16 @@ public:
   void presscToClose();
   void pressButton();
   void showMenu();
+  void decision();
+  void changesWereSaved();
   void printchar(byte col, byte row, char character);
   void confirmPassword();
   void passwordDoesntMatch();
   void wrongPassword();
   void buzzerSound(int time);
+  void chooseLedBrightness();
+  void clearLCD();
+  void setLedBrightness(int brightness);
   void changeLedStates(byte ledPin1, byte ledPin2);
   void ledFlash(byte ledPin, byte numberOfFlashes);
 private:

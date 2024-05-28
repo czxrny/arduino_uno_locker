@@ -5,8 +5,10 @@
 */
 #include <LCD_I2C.h>
 #include <Keypad.h>
+#include <Stepper.h>
 #include "include/Comunicator.h"
 #include "include/PasswordManager.h"
+
 
 // deklaracja wykorzystanych pinow mikrokontrolera
 const byte buzzerPin = A0, redDiode = A1, greenDiode = A2, doorPin = A3;
@@ -28,6 +30,12 @@ const char keys[rows][cols] = { { '1', '2', '3', 0 },
                                 { '*', '0', '#', 'x' } };
 // Obiekt klasy keypad, korzystajacy z przygotowanych zmiennych.
 Keypad *keypad = new Keypad(makeKeymap(keys), buttonsRowPins, buttonsColPins, rows, cols);
+
+//
+byte stepperI1 = 2, stepperI2 = 3, stepperI3 = 2, stepperI4 = 5;
+const int steps = 2048;
+const byte motorSpeed = 10;
+Stepper *stepperMotor = new Stepper(steps, stepperI1, stepperI2, stepperI3, stepperI4);
 
 // Deklaracja zmiennych obslugujacych kwestie zapisu hasla + utworzenie obiektu passwordManager, zajmujacego sie zapisem oraz odczytem hasel z pamieci.
 const int passwordAddress = 0;
@@ -65,6 +73,7 @@ void checkPsswd() {
 
 void setup() {
   pinSetup();
+  stepperMotor->setSpeed(motorSpeed);
   // inicjalizacja działania ekranu lcd
   lcd.begin();
   lcd.backlight();
@@ -92,14 +101,16 @@ void loop() {
     comunicator->lockerIsUnlocked();
 
   if (!analogRead(doorPin) && !isSecured) {
-    comunicator->pressButton();
+    comunicator->clearLCD();
     while (!analogRead(doorPin) && !isSecured) {
+      comunicator->pressButton();
       char input = keypad->getKey();
       if (input == 'c') {
         isSecured = true;
-        // kod do zamykania drzwi
+        //stepperMotor->step(steps * -1);
         comunicator->changeLedStates(redDiode, greenDiode);
         comunicator->buzzerSound(200);
+        comunicator->clearLCD();
       }
       // obsluga menu, ktora zostanie zakonczona dopiero po wcisnieciu '3' przez uzytkownika
       else if (input == 'x') {
@@ -107,11 +118,12 @@ void loop() {
         do {
           bool userDecided = false;
           comunicator->showMenu();
+          comunicator->decision();
           while (!analogRead(doorPin) && !userDecided) {
             input = keypad->getKey();
             if(input < '4' && input > '0'){
               userDecided = true;
-              comunicator->buzzer(300);
+              comunicator->buzzerSound(300);
             switch (input) {
               case '1':
                 passwordManager->setNewPassword();
@@ -119,9 +131,14 @@ void loop() {
                 break;
 
               case '2':
-                // kod do zmiany jasnosci ledow
-                if(input > '0' && input < '6')
-                  comunicator->setLedBrightness(int(input) - int('0'));
+                char ledBrightness = 0;
+                comunicator->chooseLedBrightness();
+                comunicator->decision();
+                while(ledBrightness < '1' || ledBrightness > '5'){
+                  ledBrightness = keypad->getKey();
+                }
+                comunicator->setLedBrightness(int(ledBrightness - '0'));
+                comunicator->changeLedStates(greenDiode, redDiode);
                 break;
 
               case '3':
@@ -131,6 +148,8 @@ void loop() {
             }
           }
         } while (input != '3' && !analogRead(doorPin));
+        comunicator->buzzerSound(400);
+        comunicator->changesWereSaved();
       }
     }
   }
@@ -147,7 +166,7 @@ void loop() {
             delay(50);
           }
           comunicator->ledFlash(greenDiode, 2);
-          // tu jest otwieranie zamka
+          //stepperMotor->step(steps);
           comunicator->changeLedStates(greenDiode, redDiode);
           isSecured = false;
         } else {
@@ -162,5 +181,4 @@ void loop() {
         cycles = cyclesTime;
       }
       cycles--;
-      // kod nasluchujacy wcisniecia przycisku i proby otwarcia zamka
     }

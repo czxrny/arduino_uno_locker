@@ -3,8 +3,8 @@
 Comunicator::Comunicator(LCD_I2C &lcd, byte buzzerPin) {
   this->lcd = &lcd;
   this->buzzerPin = buzzerPin;
+  this->ledBrightness = 255;
 }
-
 
 void Comunicator::welcomeScreen() {
   lcd->setCursor(5, 0);
@@ -47,12 +47,14 @@ void Comunicator::setNewPassword() {
 }
 
 void Comunicator::pressButton(){
-  lcd->clear();
   lcd->setCursor(0, 0);
   lcd->print("c> zamknij zamek");
   lcd->setCursor(0, 1);
   lcd->print("x> otworz menu");
-  
+}
+
+void Comunicator::clearLCD(){
+  lcd->clear();
 }
 
 void Comunicator::showMenu(){
@@ -66,6 +68,9 @@ void Comunicator::showMenu(){
   lcd->setCursor(0,0);
   lcd->print("3> wyjdz z menu");
   delay(2000);
+}
+
+void Comunicator::decision(){
   lcd->clear();
   lcd->print("Wybor >> ");
 }
@@ -103,12 +108,38 @@ void Comunicator::buzzerSound(int time) {
   delay(time);
   analogWrite(buzzerPin, 0);
 }
+/*
+
+*/
+void Comunicator::chooseLedBrightness(){
+  lcd->clear();
+  lcd->setCursor(0,0);
+  lcd->print("Wybierz jasnosc z");
+  lcd->setCursor(0,1);
+  lcd->print("Zakresu <1-5>");
+  delay(2000);
+}
+
+void Comunicator::setLedBrightness(int brightness){
+  byte brightnessTable[5] = { 0, 64, 128, 192, 255 };
+  this->ledBrightness = brightnessTable[brightness - 1];
+}
+
+void Comunicator::changesWereSaved(){
+  lcd->clear();
+  lcd->setCursor(0,0);
+  lcd->print("Wszelkie zmiany");
+  lcd->setCursor(0,1);
+  lcd->print("Zostaly zapisane");
+  delay(1000);
+  lcd->clear();
+}
 
 /*
   Procedura sluzaca do zamiany stanow diod - uzywana w momencie zmiany stanu urzadzenia (OTWARTE/ZAMKNIETE)
 */
 void Comunicator::changeLedStates(byte ledPin1, byte ledPin2){
-  analogWrite(ledPin1, 255);
+  analogWrite(ledPin1, this->ledBrightness);
   analogWrite(ledPin2, 0);
 }
 
@@ -116,7 +147,7 @@ void Comunicator::ledFlash(byte ledPin, byte numberOfFlashes){
   for(byte i = 0; i < numberOfFlashes; i++){
     analogWrite(ledPin, 0);
     delay(400);
-    analogWrite(ledPin, 255);
+    analogWrite(ledPin, this->ledBrightness);
 	delay(400);
   }
 }
