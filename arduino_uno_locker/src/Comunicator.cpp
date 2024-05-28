@@ -72,23 +72,24 @@ void Comunicator::wrongPassword(){
 }
 
 void Comunicator::buzzerSound(int time) {
-  analogWrite(buzzerPin, HIGH);
+  analogWrite(buzzerPin, 255);
   delay(time);
-  analogWrite(buzzerPin, LOW);
+  analogWrite(buzzerPin, 0);
 }
 
 /*
   Procedura sluzaca do zamiany stanow diod - uzywana w momencie zmiany stanu urzadzenia (OTWARTE/ZAMKNIETE)
 */
 void Comunicator::changeLedStates(byte ledPin1, byte ledPin2){
-  analogWrite(ledPin1, HIGH);
-  analogWrite(ledPin2, LOW);
+  analogWrite(ledPin1, 255);
+  analogWrite(ledPin2, 0);
 }
 
 void Comunicator::ledFlash(byte ledPin, byte numberOfFlashes){
   for(byte i = 0; i < numberOfFlashes; i++){
-    analogWrite(ledPin, LOW);
-    delay(1000);
-    analogWrite(ledPin, HIGH);
+    analogWrite(ledPin, 0);
+    delay(400);
+    analogWrite(ledPin, 255);
+	delay(400);
   }
 }
