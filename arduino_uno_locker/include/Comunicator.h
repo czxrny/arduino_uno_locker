@@ -27,14 +27,15 @@ public:
   void passwordDoesntMatch();
   void wrongPassword();
   void buzzerSound(int time);
-  void chooseLedBrightness();
+  void chooseBuzzerMode();
   void clearLCD();
-  void setLedBrightness(int brightness);
+  void setBuzzerMode(int brightness);
   void changeLedStates(byte ledPin1, byte ledPin2);
   void ledFlash(byte ledPin, byte numberOfFlashes);
 private:
   LCD_I2C *lcd;
   byte buzzerPin;
+  byte buzzerMode;
   byte ledBrightness;
 };
 

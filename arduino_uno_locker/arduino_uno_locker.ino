@@ -114,7 +114,7 @@ void loop() {
       }
       // obsluga menu, ktora zostanie zakonczona dopiero po wcisnieciu '3' przez uzytkownika
       else if (input == 'x') {
-        comunicator->buzzerSound(100);
+        comunicator->buzzerSound(150);
         do {
           bool userDecided = false;
           comunicator->showMenu();
@@ -131,14 +131,13 @@ void loop() {
                 break;
 
               case '2':
-                char ledBrightness = 0;
-                comunicator->chooseLedBrightness();
+                char buzzerMode = 0;
+                comunicator->chooseBuzzerMode();
                 comunicator->decision();
-                while(ledBrightness < '1' || ledBrightness > '5'){
-                  ledBrightness = keypad->getKey();
+                while(buzzerMode < '1' || buzzerMode > '2'){
+                  buzzerMode = keypad->getKey();
                 }
-                comunicator->setLedBrightness(int(ledBrightness - '0'));
-                comunicator->changeLedStates(greenDiode, redDiode);
+                comunicator->setBuzzerMode(int(buzzerMode - '0'));
                 break;
 
               case '3':

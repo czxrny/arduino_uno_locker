@@ -3,6 +3,7 @@
 Comunicator::Comunicator(LCD_I2C &lcd, byte buzzerPin) {
   this->lcd = &lcd;
   this->buzzerPin = buzzerPin;
+  this->buzzerMode = 255;
   this->ledBrightness = 255;
 }
 
@@ -62,7 +63,7 @@ void Comunicator::showMenu(){
   lcd->setCursor(0, 0);
   lcd->print("1> zmien haslo");
   lcd->setCursor(0, 1);
-  lcd->print("2> jasnosc led");
+  lcd->print("2> tryb buzzera");
   delay(2000);
   lcd->clear();
   lcd->setCursor(0,0);
@@ -104,25 +105,27 @@ void Comunicator::wrongPassword(){
 }
 
 void Comunicator::buzzerSound(int time) {
-  analogWrite(buzzerPin, 255);
+  analogWrite(buzzerPin, buzzerMode);
   delay(time);
   analogWrite(buzzerPin, 0);
 }
 /*
 
 */
-void Comunicator::chooseLedBrightness(){
+void Comunicator::chooseBuzzerMode(){
   lcd->clear();
   lcd->setCursor(0,0);
-  lcd->print("Wybierz jasnosc z");
+  lcd->print("1> tryb normalny");
   lcd->setCursor(0,1);
-  lcd->print("Zakresu <1-5>");
+  lcd->print("2> tryb cichy");
   delay(2000);
 }
 
-void Comunicator::setLedBrightness(int brightness){
-  byte brightnessTable[5] = { 0, 64, 128, 192, 255 };
-  this->ledBrightness = brightnessTable[brightness - 1];
+void Comunicator::setBuzzerMode(int mode){
+  if(mode == 1)
+	  this->buzzerMode = 255;
+  else
+	  this->buzzerMode = 0;
 }
 
 void Comunicator::changesWereSaved(){
